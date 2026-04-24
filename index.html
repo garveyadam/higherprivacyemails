@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Higher Privacy — Private Electronic Correspondence</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:    #f4ede0;
+      --paper-dk: #e8ddc8;
+      --ink:      #2a1a0e;
+      --ink-lt:   #6b5240;
+      --ink-faint:#a08060;
+      --seam:     #b89c7a;
+      --seal:     #7a3c2a;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background-color: #c8b89a;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 28px,
+          rgba(0,0,0,0.03) 28px,
+          rgba(0,0,0,0.03) 29px
+        );
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 48px 16px;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: var(--ink);
+    }
+
+    .letter {
+      background: var(--paper);
+      width: 100%;
+      max-width: 660px;
+      padding: 56px 64px 64px;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.08),
+        0 8px 24px rgba(0,0,0,0.14),
+        0 24px 64px rgba(0,0,0,0.10);
+      position: relative;
+    }
+
+    /* aged paper texture overlay */
+    .letter::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(180,140,80,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 90%, rgba(140,100,60,0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+/* ── Header ── */
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .rule {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .rule-line {
+      flex: 1;
+      height: 1px;
+      background: var(--seam);
+    }
+
+    .rule-orn {
+      color: var(--seam);
+      font-size: 14px;
+      letter-spacing: 4px;
+    }
+
+    .wordmark {
+      font-size: 11px;
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .submark {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* ── Preamble ── */
+
+    .preamble {
+      border-left: 2px solid var(--seam);
+      padding: 14px 20px;
+      margin-bottom: 40px;
+      background: rgba(184,156,122,0.08);
+    }
+
+    .preamble p {
+      font-size: 12.5px;
+      line-height: 2;
+      color: var(--ink-lt);
+      font-style: italic;
+    }
+
+    /* ── Sections ── */
+
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--paper-dk);
+    }
+
+    /* ── Forms ── */
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 6px;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--seam);
+      padding: 8px 0;
+      font-family: Georgia, serif;
+      font-size: 14px;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="email"]::placeholder,
+    input[type="password"]::placeholder,
+    input[type="text"]::placeholder {
+      color: var(--ink-faint);
+      font-style: italic;
+      font-size: 12px;
+    }
+
+    input:focus {
+      border-bottom-color: var(--ink-lt);
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 8px;
+      background: transparent;
+      border: 1px solid var(--seam);
+      padding: 9px 24px;
+      font-family: Georgia, serif;
+      font-size: 10px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--seam);
+      color: var(--paper);
+    }
+
+    .form-note {
+      font-size: 10px;
+      color: var(--ink-faint);
+      font-style: italic;
+      margin-top: 10px;
+      line-height: 1.7;
+      min-height: 18px;
+    }
+
+    /* ── Divider ── */
+
+    .divider {
+      margin: 40px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--paper-dk);
+    }
+
+    .divider-text {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* ── Footer ── */
+
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+    }
+
+    .seal {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 16px;
+      opacity: 0.55;
+    }
+
+    .footer-text {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--ink-faint);
+      line-height: 2.2;
+    }
+
+    .footer-text a {
+      color: var(--ink-faint);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ── Response messages ── */
+
+    .response {
+      display: none;
+      font-size: 11px;
+      color: var(--ink-lt);
+      font-style: italic;
+      line-height: 1.9;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-left: 2px solid var(--seam);
+      background: rgba(184,156,122,0.1);
+    }
+
+    .response.visible {
+      display: block;
+    }
+
+    @media (max-width: 560px) {
+      .letter {
+        padding: 40px 28px 48px;
+      }
+
+    }
+  </style>
+</head>
+<body>
+
+<article class="letter">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="rule">
+      <span class="rule-line"></span>
+      <span class="rule-orn">✦ ✦ ✦</span>
+      <span class="rule-line"></span>
+    </div>
+    <p class="wordmark">Higher Privacy</p>
+    <p class="submark">Private Electronic Correspondence</p>
+    <div class="rule" style="margin-top:20px;margin-bottom:0">
+      <span class="rule-line"></span>
+      <span class="rule-orn">✦</span>
+      <span class="rule-line"></span>
+    </div>
+  </header>
+
+  <!-- Preamble -->
+  <div class="preamble">
+    <p>
+      This service is not advertised. Accounts are extended by introduction
+      only. If you were directed here, you will know what is expected of you.
+      If you were not, we suggest you consider how you arrived.
+    </p>
+  </div>
+
+  <!-- Sign In -->
+  <section>
+    <p class="section-label">Return Correspondence</p>
+
+    <form id="signin-form" onsubmit="handleSignin(event)" autocomplete="off">
+      <div class="form-group">
+        <label for="signin-address">Correspondence Address</label>
+        <input type="email" id="signin-address" placeholder="your address">
+      </div>
+      <div class="form-group">
+        <label for="signin-passphrase">Passphrase</label>
+        <input type="password" id="signin-passphrase" placeholder="speak nothing to no one">
+      </div>
+      <button type="submit" class="btn">Enter</button>
+      <div class="form-note" id="signin-note">&nbsp;</div>
+      <div class="response" id="signin-response">
+        Your credentials have been received. If your account is active,
+        access will be granted momentarily. You need not refresh this page.
+      </div>
+    </form>
+  </section>
+
+  <div class="divider">
+    <span class="divider-line"></span>
+    <span class="divider-text">or</span>
+    <span class="divider-line"></span>
+  </div>
+
+  <!-- Request Access -->
+  <section>
+    <p class="section-label">New Correspondence</p>
+
+    <form id="access-form" onsubmit="handleAccess(event)" autocomplete="off">
+      <div class="form-group">
+        <label for="access-address">Your Address</label>
+        <input type="email" id="access-address" placeholder="where you may be reached">
+      </div>
+      <div class="form-group">
+        <label for="access-referral">Referred By</label>
+        <input type="text" id="access-referral" placeholder="leave blank if you found this on your own">
+      </div>
+      <button type="submit" class="btn">Submit for Consideration</button>
+      <div class="response" id="access-response">
+        Your address has been noted. Consideration takes time. You will not
+        receive confirmation of this submission. If an account is to be extended,
+        you will simply find that it has been.
+      </div>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="rule" style="margin-bottom:24px">
+      <span class="rule-line"></span>
+      <span class="rule-orn">✦</span>
+      <span class="rule-line"></span>
+    </div>
+
+    <!-- Wax seal SVG -->
+    <svg class="seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" fill="#7a3c2a" opacity="0.9"/>
+      <circle cx="50" cy="50" r="40" fill="none" stroke="#c8845a" stroke-width="1.5"/>
+      <text x="50" y="43" text-anchor="middle" font-family="Georgia,serif"
+            font-size="13" fill="#f4ede0" letter-spacing="2">H·P</text>
+      <text x="50" y="60" text-anchor="middle" font-family="Georgia,serif"
+            font-size="7" fill="#c8845a" letter-spacing="3">EST. MMXXI</text>
+    </svg>
+
+    <p class="footer-text">
+      No records are kept of who visits.<br>
+      No records are kept of who applies.<br>
+      No records are kept of correspondence.<br>
+      <br>
+      This is not a promise. It is simply the arrangement.
+    </p>
+  </footer>
+
+</article>
+
+<script>
+  function handleSignin(e) {
+    e.preventDefault();
+    const addr = document.getElementById('signin-address').value.trim();
+    if (!addr) return;
+
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    setTimeout(() => {
+      document.getElementById('signin-response').classList.add('visible');
+      btn.textContent = 'Enter';
+      btn.disabled = false;
+    }, 1400);
+  }
+
+  function handleAccess(e) {
+    e.preventDefault();
+    const addr = document.getElementById('access-address').value.trim();
+    if (!addr) return;
+
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    setTimeout(() => {
+      document.getElementById('access-response').classList.add('visible');
+      btn.textContent = 'Submit for Consideration';
+      btn.disabled = false;
+    }, 1800);
+  }
+</script>
+
+</body>
+</html>
